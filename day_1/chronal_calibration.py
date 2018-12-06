@@ -32,6 +32,7 @@ def get_frequency(start=0,
 def find_result(lines, running, reached, verbose=False):
     logger = logging.getLogger(__name__)
     for line in lines:
+        line = line.strip()
         reached.add(running)
         oper = line[0]
         val = int(line[1:])
@@ -40,7 +41,8 @@ def find_result(lines, running, reached, verbose=False):
         else:
             running -= val
         if verbose:
-            logger.info(f'input: {line.strip()}, result: {running}, uniques: {len(reached)}')
+            status = f'input: {line}, result: {running}'
+            logger.info(status)
         if running in reached:
             logging.info(f'Duplicate found: {running}')
             return True, running, reached
