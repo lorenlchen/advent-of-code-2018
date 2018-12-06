@@ -17,19 +17,21 @@ def get_frequency(start=0,
         logger.info(f'input read: {len(lines)} lines')
     if dupe:
         while not found:
-            found, running, reached = find_result(lines,
-                                                  running,
-                                                  reached,
-                                                  verbose)
+            found, running, reached = find_duplicate(lines,
+                                                     running,
+                                                     reached,
+                                                     verbose)
     else:
-        _, running, reached = find_result(lines,
-                                          running,
-                                          reached,
-                                          verbose)
+        running = find_total(lines, running, verbose)
         logger.info(f'Total: {running}')
 
 
-def find_result(lines, running, reached, verbose=False):
+def find_duplicate(lines, running, reached, verbose=False):
+    '''
+    Performs a running calculation of a total from a list
+    of operations and returns the first duplicate value
+    found.
+    '''
     logger = logging.getLogger(__name__)
     for line in lines:
         line = line.strip()
@@ -47,6 +49,26 @@ def find_result(lines, running, reached, verbose=False):
             logging.info(f'Duplicate found: {running}')
             return True, running, reached
     return False, running, reached
+
+
+def find_total(lines, running, verbose=False):
+    '''
+    Loops through a list of operations and
+    performs a running calculation to find a total.
+    '''
+    logger = logging.getLogger(__name__)
+    for line in lines:
+        line = line.strip()
+        oper = line[0]
+        val = int(line[1:])
+        if oper == '+':
+            running += val
+        else:
+            running -= val
+        if verbose:
+            status = f'input: {line}, result: {running}'
+            logger.info(status)
+    return running
 
 
 if __name__ == '__main__':
